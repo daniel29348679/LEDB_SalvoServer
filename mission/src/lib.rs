@@ -27,8 +27,8 @@ pub async fn add_mission(req: &mut Request) -> String {
         "worker_name" => worker_name,
         "state" => "nonstart" },
     ) {
-        Ok(_) => "mission insert successful".to_string(),
-        Err(_) => "mission insert failed".to_string(),
+        Ok(_) => "Ok".to_string(),
+        Err(_) => "Err".to_string(),
     }
 }
 
@@ -44,8 +44,8 @@ pub async fn remove_mission(req: &mut Request) -> String {
     let mut conn = get_conn();
     let query = "DELETE FROM mission_table WHERE  (`id` =:mission_id)";
     match conn.exec_drop(query, params! { "mission_id" => mission_id }) {
-        Ok(_) => "mission remove successful".to_string(),
-        Err(_) => "mission remove failed".to_string(),
+        Ok(_) => "Ok".to_string(),
+        Err(_) => "Err".to_string(),
     }
 }
 
@@ -129,7 +129,7 @@ pub async fn update_mission_state(req: &mut Request) -> String {
             "id" => mission_id,
         },
     ) {
-        Ok(_) => "mission state update successful".to_string(),
-        Err(_) => "mission state update failed".to_string(),
+        Ok(_) => "Ok".to_string(),
+        Err(_) => "Err".to_string(),
     }
 }

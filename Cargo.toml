@@ -15,7 +15,8 @@ worker = { path = "./worker" }
 connection = { path = "./connection" }
 mission = { path = "./mission" }
 log = { path = "./log" }
+project = { path = "./project" }
 
 [workspace]
-members = [ "connection", "log", "mission","worker"
+members = [ "connection", "log", "mission", "project","worker"
 ]
