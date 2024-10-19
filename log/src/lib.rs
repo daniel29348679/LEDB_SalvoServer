@@ -1,4 +1,5 @@
 use connection::get_conn;
+use mission::get_all_mission_id;
 use mysql::prelude::*;
 use mysql::*;
 use salvo::prelude::*;
@@ -9,21 +10,25 @@ pub async fn add_log(req: &mut Request) -> String {
         .query::<String>("mission_id")
         .unwrap_or("NULL!!".to_string());
     if mission_id == "NULL!!" {
-        return "mission_id not provided".to_string();
+        return "Err mission_id not provided".to_string();
+    }
+
+    if !get_all_mission_id().contains(&mission_id) {
+        return "Err mission_id not exist".to_string();
     }
 
     let log_date = req
         .query::<String>("log_date")
         .unwrap_or("NULL!!".to_string());
     if log_date == "NULL!!" {
-        return "log_date not provided".to_string();
+        return "Err log_date not provided".to_string();
     }
 
     let log_messege = req
         .query::<String>("log_messege")
         .unwrap_or("NULL!!".to_string());
     if log_messege == "NULL!!" {
-        return "log_messege not provided".to_string();
+        return "Err log_messege not provided".to_string();
     }
 
     let mut conn = get_conn();
@@ -36,8 +41,8 @@ pub async fn add_log(req: &mut Request) -> String {
             "log_date" => log_date,
         },
     ) {
-        Ok(_) => "log insert successful".to_string(),
-        Err(_) => "log insert failed".to_string(),
+        Ok(_) => "Ok log insert successful".to_string(),
+        Err(_) => "Err log insert failed".to_string(),
     }
 }
 

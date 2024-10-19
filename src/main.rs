@@ -34,5 +34,5 @@ async fn main() {
 
 #[handler]
 async fn root() -> String {
-    "server running".to_string()
+    "LEDA server is running".to_string()
 }

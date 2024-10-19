@@ -1187,6 +1187,7 @@ name = "log"
 version = "0.1.0"
 dependencies = [
  "connection",
+ "mission",
  "mysql",
  "salvo",
  "serde",
@@ -1270,6 +1271,7 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "worker",
 ]
 
 [[package]]

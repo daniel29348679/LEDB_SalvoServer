@@ -2,6 +2,7 @@ use connection::get_conn;
 use mysql::prelude::*;
 use mysql::*;
 use salvo::prelude::*;
+use worker::get_all_worker_names;
 
 #[handler]
 pub async fn add_mission(req: &mut Request) -> String {
@@ -9,14 +10,17 @@ pub async fn add_mission(req: &mut Request) -> String {
         .query::<String>("mission_name")
         .unwrap_or("NULL!!".to_string());
     if mission_name == "NULL!!" {
-        return "mission_name not provided".to_string();
+        return "Err mission_name not provided".to_string();
     }
 
     let worker_name = req
         .query::<String>("worker_name")
         .unwrap_or("NULL!!".to_string());
     if worker_name == "NULL!!" {
-        return "worker_name not provided".to_string();
+        return "Err worker_name not provided".to_string();
+    }
+    if !get_all_worker_names().contains(&worker_name) {
+        return "Err worker_name not exist".to_string();
     }
 
     let mut conn = get_conn();
@@ -38,7 +42,10 @@ pub async fn remove_mission(req: &mut Request) -> String {
         .query::<String>("mission_id")
         .unwrap_or("NULL!!".to_string());
     if mission_id == "NULL!!" {
-        return "mission_id not provided".to_string();
+        return "Err mission_id not provided".to_string();
+    }
+    if !get_all_mission_id().contains(&mission_id) {
+        return "Err mission_id not found".to_string();
     }
 
     let mut conn = get_conn();
@@ -104,20 +111,37 @@ fn get_all_missions(req: &mut Request) -> Vec<Vec<String>> {
     }
 }
 
+pub fn get_all_mission_id() -> Vec<String> {
+    let mut conn = get_conn();
+    let query = "SELECT `id` FROM mission_table";
+    conn.query_iter(query)
+        .unwrap()
+        .map(|row| {
+            let row = row.unwrap();
+            row.get("id").unwrap_or("".to_string())
+        })
+        .collect()
+}
+
 #[handler]
 pub async fn update_mission_state(req: &mut Request) -> String {
+    let allow_state = vec!["nonstart", "ongoing", "done"];
+
     let mission_id = req
         .query::<String>("mission_id")
         .unwrap_or("NULL!!".to_string());
     if mission_id == "NULL!!" {
-        return "mission_id not provided".to_string();
+        return "Err mission_id not provided".to_string();
     }
 
     let mission_state = req
         .query::<String>("mission_state")
         .unwrap_or("NULL!!".to_string());
     if mission_state == "NULL!!" {
-        return "mission_state not provided".to_string();
+        return "Err mission_state not provided".to_string();
+    }
+    if !allow_state.contains(&mission_state.as_str()) {
+        return "Err mission_state not allowed".to_string();
     }
 
     let mut conn = get_conn();
